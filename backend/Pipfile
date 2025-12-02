@@ -12,6 +12,8 @@ psycopg2-binary = "*"
 python-jose = {extras = ["cryptography"], version = "*"}
 passlib = {extras = ["bcrypt"], version = "*"}
 python-multipart = "*"
+email-validator = "*"
+bcrypt = "==4.0.1"
 
 [dev-packages]
 
