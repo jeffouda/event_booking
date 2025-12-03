@@ -22,3 +22,33 @@ def create_user(db: Session, user: schemas.UserCreate):
     db.commit()
     db.refresh(db_user)
     return db_user
+
+
+# ... (Keep existing imports and User functions) ...
+
+# --- EVENT CRUD OPERATIONS ---
+
+
+def get_events(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(models.Event).offset(skip).limit(limit).all()
+
+
+def create_event(db: Session, event: schemas.EventCreate):
+    db_event = models.Event(
+        title=event.title,
+        date=event.date,
+        venue=event.venue,
+        description=event.description,
+    )
+    db.add(db_event)
+    db.commit()
+    db.refresh(db_event)
+    return db_event
+
+
+def delete_event(db: Session, event_id: int):
+    db_event = db.query(models.Event).filter(models.Event.id == event_id).first()
+    if db_event:
+        db.delete(db_event)
+        db.commit()
+    return db_event
