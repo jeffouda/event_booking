@@ -1,0 +1,25 @@
+#Python Internals 
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environments 
+env/
+venv/
+.venv/
+
+# Database (Local) 
+*.sqlite3
+*.db
+
+# Security & Environment Variables 
+.env
+.env.local
+
+#  Editor Settings
+.vscode/
+.idea/
+
+# Alembic / Migrations
+# We keep the migration scripts, but ignore their compiled cache
+migration/versions/__pycache__/
