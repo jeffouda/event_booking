@@ -1,39 +1,33 @@
 from sqlalchemy.orm import Session
 from . import models, schemas, auth
 
+# User operations
 
 def get_user_by_email(db: Session, email: str):
+    """Retrieve a user by email address."""
     return db.query(models.User).filter(models.User.email == email).first()
 
 
 def create_user(db: Session, user: schemas.UserCreate):
-    # 1. Hash the password
+    """Create a new user with a hashed password."""
     hashed_password = auth.get_password_hash(user.password)
-
-    # 2. Create the User Model
     db_user = models.User(
-        username=user.username,
-        email=user.email,
-        password_hash=hashed_password,  # Store hash, NOT plain password
+        username=user.username, email=user.email, password_hash=hashed_password
     )
-
-    # 3. Add to DB and Commit
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
     return db_user
 
-
-# ... (Keep existing imports and User functions) ...
-
-# --- EVENT CRUD OPERATIONS ---
-
+# Event operations
 
 def get_events(db: Session, skip: int = 0, limit: int = 100):
+    """Retrieve all events with pagination."""
     return db.query(models.Event).offset(skip).limit(limit).all()
 
 
 def create_event(db: Session, event: schemas.EventCreate):
+    """Create a new event."""
     db_event = models.Event(
         title=event.title,
         date=event.date,
@@ -47,8 +41,39 @@ def create_event(db: Session, event: schemas.EventCreate):
 
 
 def delete_event(db: Session, event_id: int):
+    """Delete an event by ID."""
     db_event = db.query(models.Event).filter(models.Event.id == event_id).first()
     if db_event:
         db.delete(db_event)
         db.commit()
     return db_event
+
+# TicketType operations
+
+def create_ticket_type(
+    db: Session, ticket_type: schemas.TicketTypeCreate, event_id: int
+):
+    """Add a new pricing tier (TicketType) to a specific event."""
+    db_ticket_type = models.TicketType(**ticket_type.dict(), event_id=event_id)
+    db.add(db_ticket_type)
+    db.commit()
+    db.refresh(db_ticket_type)
+    return db_ticket_type
+  
+# Booking Operations
+
+def book_ticket(db: Session, ticket_type_id: int, user_id: int):
+    """
+    Create a booking record.
+    Note: In a production app, we would check quantity_available > 0 here.
+    """
+    db_ticket = models.Ticket(ticket_type_id=ticket_type_id, user_id=user_id)
+    db.add(db_ticket)
+    db.commit()
+    db.refresh(db_ticket)
+    return db_ticket
+
+
+def get_user_tickets(db: Session, user_id: int):
+    """Retrieve all tickets booked by a specific user."""
+    return db.query(models.Ticket).filter(models.Ticket.user_id == user_id).all()
