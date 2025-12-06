@@ -1,16 +1,82 @@
-# React + Vite
+# EventSphere Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is the frontend application for the EventSphere event booking system, built with React and Vite.
 
-Currently, two official plugins are available:
+## Technologies Used
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **React**: JavaScript library for building user interfaces
+- **Vite**: Fast build tool and development server
+- **React Router**: Declarative routing for React
+- **Axios**: HTTP client for API requests
+- **Formik**: Form library for React
+- **Yup**: Schema validation for forms
+- **JWT Decode**: Decode JWT tokens
 
-## React Compiler
+## Setup and Installation
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/jeffouda/event_booking
+   cd event-booking/frontend
+   ```
 
-## Expanding the ESLint configuration
+2. **Install dependencies**:
+   ```bash
+   npm install
+   ```
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+3. **Start the development server**:
+   ```bash
+   npm run dev
+   ```
+
+   The application will be available at `http://localhost:5173`
+
+## Building for Production
+
+1. **Build the application**:
+   ```bash
+   npm run build
+   ```
+
+2. **Preview the production build**:
+   ```bash
+   npm run preview
+   ```
+
+## Project Structure
+
+- `src/App.jsx`: Main application component with routing
+- `src/pages/`: Page components (Login, Register, Events, etc.)
+- `src/components/`: Reusable components (Navbar)
+- `src/context/`: React context for authentication
+- `src/api/`: Axios configuration for API calls
+- `src/layouts/`: Layout components
+
+## Features
+
+- User registration and login
+- Event browsing and creation
+- Ticket booking system
+- User dashboard for booked tickets
+- Responsive design with glassmorphism UI
+
+## Environment Variables
+
+Create a `.env` file in the root directory if needed for API base URL:
+
+```
+VITE_API_BASE_URL=http://localhost:8000
+```
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Run linting: `npm run lint`
+5. Submit a pull request
+
+## License
+
+This project is licensed under the MIT License. Feel free to use, modify, and distribute it as per the license terms.
