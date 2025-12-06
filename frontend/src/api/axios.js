@@ -1,8 +1,10 @@
 import axios from 'axios';
 
 // Create an instance pointing to your FastAPI backend
+const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+
 const api = axios.create({
-    baseURL: 'http://localhost:8000', 
+    baseURL: BASE_URL,
 });
 
 // Interceptor: Automatically adds the Token to every request
