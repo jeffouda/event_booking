@@ -11,8 +11,6 @@ const Navbar = () => {
         navigate('/login');
     };
 
-    if (!user) return null; // Don't show navbar if not logged in
-
     return (
         <nav style={styles.nav}>
             {/* Left Side: Brand Name */}
@@ -22,17 +20,33 @@ const Navbar = () => {
 
             {/* Right Side: User Actions */}
             <div style={styles.actions}>
-                <span style={styles.userText}>
-                    Hello, <strong>{user.username || user.email}</strong>
-                </span>
-                
-                <button onClick={() => navigate('/my-tickets')} style={styles.linkButton}>
-                    My Tickets
-                </button>
-                
-                <button onClick={handleLogout} style={styles.logoutButton}>
-                    Logout
-                </button>
+                {user ? (
+                    // SCENARIO A: User IS Logged In
+                    <>
+                        <span style={styles.userText}>
+                            Hello, <strong>{user.username || user.email}</strong>
+                        </span>
+                        
+                        <button onClick={() => navigate('/my-tickets')} style={styles.linkButton}>
+                            My Tickets
+                        </button>
+                        
+                        <button onClick={handleLogout} style={styles.logoutButton}>
+                            Logout
+                        </button>
+                    </>
+                ) : (
+                    // SCENARIO B: User is NOT Logged In (Guest)
+                    <>
+                        <span style={styles.userText}>Welcome, Guest!</span>
+                        <button onClick={() => navigate('/login')} style={styles.loginButton}>
+                            Login
+                        </button>
+                        <button onClick={() => navigate('/register')} style={styles.registerButton}>
+                            Register
+                        </button>
+                    </>
+                )}
             </div>
         </nav>
     );
@@ -80,6 +94,27 @@ const styles = {
         borderRadius: '20px',
         cursor: 'pointer',
         fontSize: '14px'
+    },
+    // NEW STYLES
+    loginButton: {
+        backgroundColor: '#007BFF',
+        color: 'white',
+        border: 'none',
+        padding: '8px 16px',
+        borderRadius: '20px',
+        cursor: 'pointer',
+        fontSize: '14px',
+        fontWeight: 'bold'
+    },
+    registerButton: {
+        backgroundColor: '#28a745',
+        color: 'white',
+        border: 'none',
+        padding: '8px 16px',
+        borderRadius: '20px',
+        cursor: 'pointer',
+        fontSize: '14px',
+        fontWeight: 'bold'
     }
 };
 
