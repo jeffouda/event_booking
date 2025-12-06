@@ -42,7 +42,6 @@ class EventCreate(EventBase):
     pass
 
 
-# TICKET TYPES
 class TicketTypeBase(BaseModel):
     category: str
     price: float
@@ -62,7 +61,6 @@ class TicketTypeResponse(TicketTypeBase):
         from_attributes = True
 
 
-# EVENT RESPONSE
 class EventResponse(EventBase):
     id: int
     ticket_types: List[TicketTypeResponse] = []
@@ -71,7 +69,6 @@ class EventResponse(EventBase):
         from_attributes = True
 
 
-# BOOKINGS
 class TicketCreate(BaseModel):
     ticket_type_id: int
 
