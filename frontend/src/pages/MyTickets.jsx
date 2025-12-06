@@ -19,20 +19,13 @@ const MyTickets = () => {
     }, []);
 
     return (
-        <div style={{ maxWidth: '800px', margin: '30px auto', padding: '20px' }}>
+        <div className="glass-container">
             {/* Header */}
             <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px'}}>
-                <h1>🎟️ My Bookings</h1>
+                <h1 style={{margin: 0, color: '#333'}}>🎟️ My Bookings</h1>
                 <button 
                     onClick={() => navigate('/events')} 
-                    style={{
-                        padding: '10px 15px', 
-                        cursor: 'pointer',
-                        backgroundColor: '#6c757d',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '5px'
-                    }}
+                    style={styles.backButton}
                 >
                     ← Back to Events
                 </button>
@@ -45,7 +38,7 @@ const MyTickets = () => {
                         <div key={ticket.id} style={styles.ticketCard}>
                             
                             {/* LEFT SIDE: Event Details */}
-                            <div style={{ flex: 2, paddingRight: '20px', borderRight: '2px dashed #eee' }}>
+                            <div style={{ flex: 2, paddingRight: '20px', borderRight: '2px dashed #ccc' }}>
                                 <h2 style={{ marginTop: 0, marginBottom: '5px', color: '#222' }}>
                                     {ticket.ticket_type?.event?.title || "Unknown Event"}
                                 </h2>
@@ -60,7 +53,7 @@ const MyTickets = () => {
 
                             {/* RIGHT SIDE: Ticket Info */}
                             <div style={{ flex: 1, paddingLeft: '20px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                                <div style={{ backgroundColor: '#f8f9fa', padding: '10px', borderRadius: '8px', textAlign: 'center' }}>
+                                <div style={{ backgroundColor: '#f0f4f8', padding: '10px', borderRadius: '8px', textAlign: 'center' }}>
                                     <span style={{ display: 'block', fontSize: '12px', textTransform: 'uppercase', color: '#666', letterSpacing: '1px' }}>
                                         Ticket Type
                                     </span>
@@ -79,7 +72,7 @@ const MyTickets = () => {
                         </div>
                     ))
                 ) : (
-                    <div style={{ textAlign: 'center', padding: '40px', color: '#666', backgroundColor: '#f9f9f9', borderRadius: '8px' }}>
+                    <div style={styles.emptyState}>
                         <h3>No tickets found.</h3>
                         <p>Go to the Events page to book your first ticket!</p>
                     </div>
@@ -89,27 +82,32 @@ const MyTickets = () => {
     );
 };
 
-// Styles Object
 const styles = {
+    glassContainer: {
+        maxWidth: '800px', margin: '30px auto', padding: '40px',
+        // --- GLASS STYLE ---
+        backgroundColor: 'rgba(255, 255, 255, 0.85)',
+        backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)',
+        border: '1px solid rgba(255, 255, 255, 0.5)', borderRadius: '24px',
+        boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.1)',
+        minHeight: '80vh'
+    },
+    backButton: {
+        padding: '10px 15px', cursor: 'pointer', backgroundColor: '#6c757d', color: 'white', border: 'none', borderRadius: '8px'
+    },
     ticketCard: { 
         display: 'flex', 
-        backgroundColor: '#ffffff', // Force White Background
-        border: '1px solid #e0e0e0', 
-        borderRadius: '12px', 
-        padding: '20px', 
+        backgroundColor: 'rgba(255, 255, 255, 0.95)', 
+        border: '1px solid rgba(0,0,0,0.05)', 
+        borderRadius: '16px', 
+        padding: '25px', 
         boxShadow: '0 4px 6px rgba(0,0,0,0.05)',
         alignItems: 'stretch'
     },
     confirmedBadge: {
-        marginTop: '10px',
-        textAlign: 'center',
-        color: '#155724',
-        backgroundColor: '#d4edda',
-        padding: '5px',
-        borderRadius: '4px',
-        fontSize: '12px',
-        fontWeight: 'bold'
-    }
+        marginTop: '10px', textAlign: 'center', color: '#155724', backgroundColor: '#d4edda', padding: '5px', borderRadius: '4px', fontSize: '12px', fontWeight: 'bold'
+    },
+    emptyState: { textAlign: 'center', padding: '40px', color: '#666', backgroundColor: 'rgba(255,255,255,0.5)', borderRadius: '16px' }
 };
 
 export default MyTickets;
