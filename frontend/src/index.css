@@ -1,68 +1,123 @@
+/* GLOBAL RESET & FONTS*/
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
 }
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
+  padding: 0;
   min-height: 100vh;
+  
+  /* Background Image*/
+  background-image: url('https://images.unsplash.com/photo-1492684223066-81342ee5ff30?q=80&w=2070&auto=format&fit=crop');
+  
+  /* Make image fixed so it doesn't move when scrolling */
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+
+body::before {
+  content: "";
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.6); 
+  z-index: -1;
 }
 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
+/* CUSTOM SCROLLBAR (Optional Polish) */
+::-webkit-scrollbar {
+  width: 10px;
 }
-button:hover {
-  border-color: #646cff;
+::-webkit-scrollbar-track {
+  background: #f1f1f1; 
 }
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+::-webkit-scrollbar-thumb {
+  background: #888; 
+  border-radius: 5px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #555; 
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
+/*RESPONSIVE CLASSES*/
+
+/* The Glass Card Container */
+.glass-container {
+  max-width: 1000px;
+  margin: 50px auto;
+  padding: 40px;
+  min-height: 80vh;
+  
+  /* Desktop Style: See-through glass */
+  background-color: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 24px;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
+}
+
+/* The Grid Layout (Events List) */
+.event-grid {
+  display: grid;
+  
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+/* The Header Layout (Title + Buttons) */
+.header-flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  border-bottom: 1px solid rgba(0,0,0,0.1);
+  padding-bottom: 20px;
+  gap: 15px;
+}
+
+/* MOBILE MAGIC (Media Query)*/
+/* This activates ONLY on screens smaller than 768px (Phones/Tablets) */
+@media (max-width: 768px) {
+  
+  .glass-container {
+    margin: 10px;      
+    padding: 20px;     
+    
+    
+    background-color: rgba(255, 255, 255, 0.96) !important;
+    
+    
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
   }
-  a:hover {
-    color: #747bff;
+
+  .header-flex {
+    flex-direction: column; 
+    align-items: stretch;   
+    text-align: center;
   }
-  button {
-    background-color: #f9f9f9;
+
+  .header-flex h1 {
+    font-size: 24px;
+    margin-bottom: 10px;
+  }
+
+  /* Make header buttons full width for easy tapping */
+  .header-flex button {
+    width: 100%;
+    margin-bottom: 5px;
+    padding: 12px !important; 
+  }
+
+  /* Adjust grid gap for small screens */
+  .event-grid {
+    gap: 15px;
   }
 }
