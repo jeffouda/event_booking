@@ -1,18 +1,15 @@
+# Database operations for the event booking app
 from sqlalchemy.orm import Session, joinedload
 from . import models, schemas, auth
 
-# =======================
-# 👤 USER OPERATIONS
-# =======================
-
 
 def get_user_by_email(db: Session, email: str):
-    """Retrieve a user by email address."""
+    """Get user by email."""
     return db.query(models.User).filter(models.User.email == email).first()
 
 
 def create_user(db: Session, user: schemas.UserCreate):
-    """Create a new user with a hashed password."""
+    """Create a new user with hashed password."""
     hashed_password = auth.get_password_hash(user.password)
     db_user = models.User(
         username=user.username, email=user.email, password_hash=hashed_password
@@ -23,16 +20,8 @@ def create_user(db: Session, user: schemas.UserCreate):
     return db_user
 
 
-# =======================
-# 📅 EVENT OPERATIONS
-# =======================
-
-
 def get_events(db: Session, skip: int = 0, limit: int = 100):
-    """
-    Retrieve all events.
-    We use joinedload to fetch 'ticket_types' automatically.
-    """
+    """Get list of events with ticket types."""
     return (
         db.query(models.Event)
         .options(joinedload(models.Event.ticket_types))
@@ -47,6 +36,7 @@ def create_event(db: Session, event: schemas.EventCreate):
     db_event = models.Event(
         title=event.title,
         date=event.date,
+        end_time=event.end_time,
         venue=event.venue,
         description=event.description,
     )
@@ -65,15 +55,10 @@ def delete_event(db: Session, event_id: int):
     return db_event
 
 
-# =======================
-# 🎫 TICKET TYPE OPERATIONS
-# =======================
-
-
 def create_ticket_type(
     db: Session, ticket_type: schemas.TicketTypeCreate, event_id: int
 ):
-    """Add a pricing category (e.g. VIP) to an event."""
+    """Create a ticket type for an event."""
     db_ticket_type = models.TicketType(**ticket_type.dict(), event_id=event_id)
     db.add(db_ticket_type)
     db.commit()
@@ -81,41 +66,23 @@ def create_ticket_type(
     return db_ticket_type
 
 
-# =======================
-# 🛒 BOOKING OPERATIONS
-# =======================
-
-
 def book_ticket(db: Session, ticket_type_id: int, user_id: int):
-    """
-    Create a booking.
-    We fetch the ticket_type first to ensure the response schema has data.
-    """
-    # 1. Get the ticket type details (so we know the price/category)
+    """Book a ticket for a user."""
     ticket_type = (
         db.query(models.TicketType)
         .filter(models.TicketType.id == ticket_type_id)
         .first()
     )
-
-    # 2. Create the ticket
     db_ticket = models.Ticket(ticket_type_id=ticket_type_id, user_id=user_id)
     db.add(db_ticket)
     db.commit()
     db.refresh(db_ticket)
-
-    # 3. Manually attach the relationship for the immediate API response
     db_ticket.ticket_type = ticket_type
     return db_ticket
 
 
 def get_user_tickets(db: Session, user_id: int):
-    """
-    Retrieve user tickets.
-    CRITICAL: We use a chained joinedload to get:
-    Ticket -> TicketType -> Event
-    This ensures the Frontend can see the Event Title.
-    """
+    """Get all tickets for a user."""
     return (
         db.query(models.Ticket)
         .options(

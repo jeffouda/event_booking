@@ -1,11 +1,9 @@
+# Pydantic schemas for the API
 from pydantic import BaseModel, EmailStr
 from typing import Optional, List
 from datetime import datetime
 
 
-# =======================
-# AUTH & USER
-# =======================
 class Token(BaseModel):
     access_token: str
     token_type: str
@@ -26,18 +24,16 @@ class UserCreate(UserBase):
 
 class UserResponse(UserBase):
     id: int
-    is_admin: bool = False  # <--- Sent to frontend
+    is_admin: bool = False
 
     class Config:
         from_attributes = True
 
 
-# =======================
-# EVENTS
-# =======================
 class EventBase(BaseModel):
     title: str
-    date: datetime
+    date: datetime  # Start
+    end_time: datetime
     venue: str
     description: Optional[str] = None
 
@@ -46,9 +42,7 @@ class EventCreate(EventBase):
     pass
 
 
-# =======================
 # TICKET TYPES
-# =======================
 class TicketTypeBase(BaseModel):
     category: str
     price: float
@@ -62,15 +56,13 @@ class TicketTypeCreate(TicketTypeBase):
 class TicketTypeResponse(TicketTypeBase):
     id: int
     event_id: int
-    event: Optional[EventBase] = None  # Nested Event Data
+    event: Optional[EventBase] = None
 
     class Config:
         from_attributes = True
 
 
-# =======================
-# EVENT RESPONSE (Combined)
-# =======================
+# EVENT RESPONSE
 class EventResponse(EventBase):
     id: int
     ticket_types: List[TicketTypeResponse] = []
@@ -79,9 +71,7 @@ class EventResponse(EventBase):
         from_attributes = True
 
 
-# =======================
 # BOOKINGS
-# =======================
 class TicketCreate(BaseModel):
     ticket_type_id: int
 

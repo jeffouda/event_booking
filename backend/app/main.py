@@ -1,3 +1,4 @@
+# FastAPI application for the EventSphere event booking system
 from fastapi import FastAPI, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
@@ -8,12 +9,12 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from . import models, schemas, crud, auth, database
 
-# Create tables
+# Create database tables
 models.Base.metadata.create_all(bind=database.engine)
 
 app = FastAPI(title="EventSphere API", version="1.0.0")
 
-# CORS
+# Configure CORS middleware
 origins = ["http://localhost:5173", "http://localhost:3000"]
 app.add_middleware(
     CORSMiddleware,
@@ -57,9 +58,6 @@ def get_current_user(
     return user
 
 
-# --- AUTH ROUTES ---
-
-
 @app.post("/register", response_model=schemas.UserResponse)
 def register_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     db_user = crud.get_user_by_email(db, email=user.email)
@@ -81,15 +79,15 @@ def login_for_access_token(
         )
     access_token_expires = timedelta(minutes=auth.ACCESS_TOKEN_EXPIRE_MINUTES)
 
-    # --- UPDATED: Add 'is_admin' to Token ---
     access_token = auth.create_access_token(
-        data={"sub": user.email, "is_admin": user.is_admin},
+        data={
+            "sub": user.email,
+            "username": user.username,
+            "is_admin": user.is_admin,
+        },
         expires_delta=access_token_expires,
     )
     return {"access_token": access_token, "token_type": "bearer"}
-
-
-# --- EVENT ROUTES ---
 
 
 @app.get("/events", response_model=List[schemas.EventResponse])
@@ -98,7 +96,6 @@ def read_events(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     return events
 
 
-# NOTE: We do NOT enforce is_admin here. Any logged-in user can create events.
 @app.post("/events", response_model=schemas.EventResponse)
 def create_event(
     event: schemas.EventCreate,
@@ -114,15 +111,10 @@ def delete_event(
     db: Session = Depends(get_db),
     current_user: schemas.UserResponse = Depends(get_current_user),
 ):
-    # Ideally we check current_user.is_admin here too,
-    # but for now we rely on the Frontend hiding the button.
     event = crud.delete_event(db, event_id)
     if event is None:
         raise HTTPException(status_code=404, detail="Event not found")
     return {"detail": "Event deleted successfully"}
-
-
-# --- TICKET & BOOKING ROUTES ---
 
 
 @app.post("/events/{event_id}/tickets", response_model=schemas.TicketTypeResponse)
