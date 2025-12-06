@@ -1,3 +1,4 @@
+// Page component for user registration
 import React, { useContext } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
@@ -30,7 +31,7 @@ const Register = () => {
 
     return (
         <div style={styles.container}>
-            <h2>Register</h2>
+            <h2 style={{textAlign: 'center', marginBottom: '20px', color: '#333'}}>Create Account</h2>
             <Formik
                 initialValues={{ username: '', email: '', password: '', confirmPassword: '' }}
                 validationSchema={validationSchema}
@@ -41,25 +42,25 @@ const Register = () => {
                         {status && <div style={styles.errorBox}>{status}</div>}
 
                         <div style={styles.fieldGroup}>
-                            <label>Username</label>
+                            <label style={styles.label}>Username</label>
                             <Field type="text" name="username" style={styles.input} />
                             <ErrorMessage name="username" component="div" style={styles.errorText} />
                         </div>
 
                         <div style={styles.fieldGroup}>
-                            <label>Email</label>
+                            <label style={styles.label}>Email</label>
                             <Field type="email" name="email" style={styles.input} />
                             <ErrorMessage name="email" component="div" style={styles.errorText} />
                         </div>
 
                         <div style={styles.fieldGroup}>
-                            <label>Password</label>
+                            <label style={styles.label}>Password</label>
                             <Field type="password" name="password" style={styles.input} />
                             <ErrorMessage name="password" component="div" style={styles.errorText} />
                         </div>
 
                         <div style={styles.fieldGroup}>
-                            <label>Confirm Password</label>
+                            <label style={styles.label}>Confirm Password</label>
                             <Field type="password" name="confirmPassword" style={styles.input} />
                             <ErrorMessage name="confirmPassword" component="div" style={styles.errorText} />
                         </div>
@@ -67,9 +68,9 @@ const Register = () => {
                         <button type="submit" disabled={isSubmitting} style={styles.button}>
                             {isSubmitting ? 'Registering...' : 'Register'}
                         </button>
-                        
-                        <p style={{marginTop: '10px'}}>
-                            Already have an account? <Link to="/login">Login here</Link>
+
+                        <p style={{marginTop: '20px', textAlign: 'center', color: '#444'}}>
+                            Already have an account? <Link to="/login" style={{color: '#28a745', fontWeight: 'bold'}}>Login here</Link>
                         </p>
                     </Form>
                 )}
@@ -78,15 +79,46 @@ const Register = () => {
     );
 };
 
-// Reusing the same simple styles
+// GLASSMORPHISM STYLES 
 const styles = {
-    container: { maxWidth: '400px', margin: '50px auto', padding: '20px', border: '1px solid #ddd', borderRadius: '8px' },
+    container: {
+        maxWidth: '400px',
+        margin: '5vh auto', 
+        padding: '40px',
+
+        backgroundColor: 'rgba(255, 255, 255, 0.75)',
+        backdropFilter: 'blur(16px)',
+        WebkitBackdropFilter: 'blur(16px)',
+
+        borderRadius: '20px',
+        border: '1px solid rgba(255, 255, 255, 0.6)',
+        boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.3)',
+    },
     form: { display: 'flex', flexDirection: 'column', gap: '15px' },
     fieldGroup: { display: 'flex', flexDirection: 'column', textAlign: 'left' },
-    input: { padding: '8px', fontSize: '16px', marginTop: '5px' },
-    button: { padding: '10px', fontSize: '16px', backgroundColor: '#28a745', color: '#fff', border: 'none', cursor: 'pointer' },
-    errorText: { color: 'red', fontSize: '12px', marginTop: '5px' },
-    errorBox: { backgroundColor: '#ffe6e6', color: 'red', padding: '10px', borderRadius: '4px' }
+    label: { fontWeight: 'bold', marginBottom: '5px', color: '#333' },
+    input: {
+        padding: '10px',
+        fontSize: '16px',
+        borderRadius: '8px',
+        border: '1px solid #ccc',
+        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+        outline: 'none'
+    },
+    button: {
+        padding: '12px',
+        fontSize: '16px',
+        backgroundColor: '#28a745',
+        color: '#fff',
+        border: 'none',
+        cursor: 'pointer',
+        borderRadius: '8px',
+        fontWeight: 'bold',
+        marginTop: '10px',
+        boxShadow: '0 4px 6px rgba(40, 167, 69, 0.3)'
+    },
+    errorText: { color: '#d93025', fontSize: '13px', marginTop: '2px', fontWeight: '500' },
+    errorBox: { backgroundColor: 'rgba(255, 0, 0, 0.1)', color: '#d93025', padding: '10px', borderRadius: '6px', textAlign: 'center' }
 };
 
 export default Register;
