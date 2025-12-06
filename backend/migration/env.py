@@ -19,15 +19,16 @@ if config.config_file_name is not None:
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
 #target_metadata = None
-import sys, os
+import sys
+import  os
 
 # This allows Alembic to see the 'app' folder
 sys.path.append(os.getcwd())
 
-from app.database import Base
+from app.database import Base # noqa: E402
 
 # Import all models so Alembic can detect them
-from app.models import User, Event, TicketType, Ticket
+from app.models import User, Event, TicketType, Ticket 
 
 target_metadata = Base.metadata
 

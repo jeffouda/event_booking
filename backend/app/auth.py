@@ -1,7 +1,7 @@
 # Authentication utilities for JWT token handling and password hashing
 from datetime import datetime, timedelta
 from typing import Optional
-from jose import JWTError, jwt
+
 from passlib.context import CryptContext
 
 # SECRET_KEY: In a real app, this should be in an .env file.
