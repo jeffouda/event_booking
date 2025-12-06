@@ -16,7 +16,7 @@ This is the backend API for the EventSphere event booking application, built wit
 
 1. **Clone the repository**:
    ```bash
-   git clone <repository-url>
+   git clone <https://github.com/jeffouda/event_booking>
    cd event-booking/backend
    ```
 
@@ -85,9 +85,9 @@ For production, set the following environment variables:
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes
-4. Run tests (if any)
-5. Submit a pull request
+4. Submit a pull request
 
 ## License
 
-[Add license if applicable]
+This project is licensed under the MIT License. Feel free to use, modify, and distribute it as per the license terms.
+
