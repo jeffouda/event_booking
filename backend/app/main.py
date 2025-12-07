@@ -5,16 +5,18 @@ from datetime import timedelta
 from jose import JWTError, jwt
 from typing import List
 from fastapi.middleware.cors import CORSMiddleware
+import os
 
 from . import models, schemas, crud, auth, database
+from .database import SessionLocal  # Import SessionLocal for the startup script
 
 # Create database tables
 models.Base.metadata.create_all(bind=database.engine)
 
 app = FastAPI(title="EventSphere API", version="1.0.0")
 
-
-# We use ["*"] to explicitly allow ALL origins.
+# CORS SETTINGS 
+# Explicitly allow all origins so Vercel can talk to Render
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -23,7 +25,44 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+#AUTO-ADMIN STARTUP SCRIPT 
+@app.on_event("startup")
+def create_default_admin():
+    """
+    Runs when the server starts.
+    Checks if the admin exists. If not, creates one.
+    """
+    db = SessionLocal()
+    try:
+        admin_email = "admin@eventsphere.com"
+        # Check if admin already exists
+        existing_admin = crud.get_user_by_email(db, email=admin_email)
 
+        if not existing_admin:
+            print("Admin not found. Creating default admin")
+
+            # Create the user object
+            admin_data = schemas.UserCreate(
+                username="SuperAdmin",
+                email=admin_email,
+                password="admin123",  #Default Password
+            )
+
+            # Use CRUD to create (this handles password hashing)
+            new_admin = crud.create_user(db, admin_data)
+
+            # Manually set is_admin to True
+            new_admin.is_admin = True
+            db.add(new_admin)
+            db.commit()
+            print("Default Admin Created: admin@eventsphere.com / admin123")
+        else:
+            print("Admin already exists.")
+
+    except Exception as e:
+        print(f"Error creating admin: {e}")
+    finally:
+        db.close()
 
 def get_db():
     db = database.SessionLocal()
@@ -58,8 +97,7 @@ def get_current_user(
     return user
 
 
-#AUTH ROUTES 
-
+#AUTH ROUTES
 
 @app.post("/register", response_model=schemas.UserResponse)
 def register_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
@@ -82,22 +120,19 @@ def login_for_access_token(
         )
     access_token_expires = timedelta(minutes=auth.ACCESS_TOKEN_EXPIRE_MINUTES)
 
-    
-    # We include 'user_id' so the frontend knows who the user is.
+    # Include user_id and is_admin in the token
     access_token = auth.create_access_token(
         data={
             "sub": user.email,
             "username": user.username,
             "is_admin": user.is_admin,
-            "user_id": user.id,  # <--- CRITICAL FOR EDITING
+            "user_id": user.id,
         },
         expires_delta=access_token_expires,
     )
     return {"access_token": access_token, "token_type": "bearer"}
 
-
-#EVENT ROUTES
-
+#EVENT ROUTES 
 
 @app.get("/events", response_model=List[schemas.EventResponse])
 def read_events(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
@@ -111,7 +146,7 @@ def create_event(
     db: Session = Depends(get_db),
     current_user: schemas.UserResponse = Depends(get_current_user),
 ):
-    # Pass current_user.id so we know who the owner is
+    # Pass user_id to link event to creator
     return crud.create_event(db=db, event=event, user_id=current_user.id)
 
 
@@ -122,12 +157,11 @@ def update_event(
     db: Session = Depends(get_db),
     current_user: schemas.UserResponse = Depends(get_current_user),
 ):
-    # Check if event exists
     db_event = db.query(models.Event).filter(models.Event.id == event_id).first()
     if not db_event:
         raise HTTPException(status_code=404, detail="Event not found")
 
-    # Permission Check: Must be Admin OR Owner
+    # Permission: Owner OR Admin
     if db_event.owner_id != current_user.id and not current_user.is_admin:
         raise HTTPException(status_code=403, detail="Not authorized to edit this event")
 
@@ -142,7 +176,7 @@ def delete_event(
 ):
     db_event = db.query(models.Event).filter(models.Event.id == event_id).first()
 
-    # Permission Check Here Too
+    #Permission: Owner OR Admin
     if db_event and db_event.owner_id != current_user.id and not current_user.is_admin:
         raise HTTPException(
             status_code=403, detail="Not authorized to delete this event"
@@ -154,8 +188,7 @@ def delete_event(
     return {"detail": "Event deleted successfully"}
 
 
-#TICKET ROUTES 
-
+#TICKET ROUTES
 
 @app.post("/events/{event_id}/tickets", response_model=schemas.TicketTypeResponse)
 def create_ticket_type(
